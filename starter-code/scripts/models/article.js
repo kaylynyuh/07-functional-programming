@@ -30,7 +30,7 @@ Article.loadAll = function(dataWePassIn) {
 /* TODO: Refactoring the Article.fetchAll method, it now accepts a parameter
     that will execute once the loading of articles is done. We do this because
     we might want to call other view functions, and not just initIndexPage();
-    Now instead of calling articleView.initIndexPage(), we can call
+    Now instead of calling articleView.renderIndexPage(), we can call
     whatever we pass in! */
 Article.fetchAll = function(nextFunction) {
   if (localStorage.hackerIpsum) {
@@ -41,16 +41,16 @@ Article.fetchAll = function(nextFunction) {
         var eTag = xhr.getResponseHeader('eTag');
         if (!localStorage.eTag || eTag !== localStorage.eTag) {
           localStorage.eTag = eTag;
-          Article.getAll(); //TODO: pass 'nextFunction' into Article.getAll();
+          Article.getAll(nextFunction); // DONE pass 'nextFunction' into Article.getAll();
         } else {
           Article.loadAll(JSON.parse(localStorage.hackerIpsum));
-          // TODO: Replace the following line with 'nextFunction' and invoke it!
-          articleView.renderIndexPage();
+          // DONE Replace the following line with 'nextFunction' and invoke it!
+          nextFunction();
         }
       }
     });
   } else {
-    Article.getAll(); // TODO: pass 'nextFunction' into getAll();
+    Article.getAll(nextFunction); // DONE pass 'nextFunction' into getAll();
   }
 };
 
@@ -58,7 +58,8 @@ Article.getAll = function(nextFunction) {
   $.getJSON('/data/hackerIpsum.json', function(responseData) {
     Article.loadAll(responseData);
     localStorage.hackerIpsum = JSON.stringify(responseData);
-    // TODO: invoke nextFunction!
+    // DONE invoke nextFunction!
+    nextFunction();
   });
 };
 
